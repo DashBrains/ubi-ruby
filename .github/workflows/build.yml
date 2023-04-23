@@ -20,7 +20,7 @@ jobs:
       packages: write
 
     env:
-      IMAGE_NAME: ${{ matrix.container_base }}/ruby:${{ matrix.ruby_version }}
+      IMAGE_NAME: dashbrains/${{ matrix.container_base }}/ruby:${{ matrix.ruby_version }}
 
     steps:
       - name: Checkout repository
