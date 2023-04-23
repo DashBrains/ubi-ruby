@@ -1,4 +1,5 @@
 ARG IMAGE=ubi9
+
 FROM redhat/${IMAGE} AS dependencies
 
 # Install dependencies
@@ -24,3 +25,5 @@ ARG RUBY_BERSION=3.2
 
 # Install Ruby
 RUN ruby-install --no-install-deps --system ruby ${RUBY_BERSION}
+
+LABEL org.opencontainers.image.source https://github.com/dashbrains/ubi-ruby

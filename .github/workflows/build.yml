@@ -11,7 +11,7 @@ jobs:
   build-and-push-image:
     strategy:
       matrix:
-        ruby_version: ['3.2.2']
+        ruby_version: ['3.2.2', '3.1.4', '3.0.6']
         container_base: ['ubi9', 'ubi9-micro', 'ubi9-init', 'ubi9-minimal', 'ubi8', 'ubi8-micro', 'ubi8-init', 'ubi8-minimal']
 
     runs-on: ubuntu-latest
