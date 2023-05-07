@@ -1,5 +1,7 @@
 name: Create and publish a Docker image
 
+runs-on: self-hosted
+
 on:
   push:
     branches: ['main']
@@ -12,7 +14,7 @@ jobs:
     strategy:
       matrix:
         ruby_version: ['3.2.2', '3.1.4', '3.0.6']
-        container_base: ['ubi9', 'ubi9-micro', 'ubi9-init', 'ubi9-minimal', 'ubi8', 'ubi8-micro', 'ubi8-init', 'ubi8-minimal']
+        container_base: ['ubi9', 'ubi8']
 
     runs-on: ubuntu-latest
 
@@ -57,6 +59,9 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+          build-args: |
+            IMAGE=${{ matrix.container_base }}
+            RUBY_BERSION=${{ matrix.ruby_version }}
 
       - name: Move cache
         run: |

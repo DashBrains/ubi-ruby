@@ -4,7 +4,7 @@ FROM redhat/${IMAGE} AS dependencies
 
 # Install dependencies
 RUN yum --disableplugin=subscription-manager -y update
-RUN yum --disableplugin=subscription-manager -y install wget make xz gcc libyaml-devel zlib zlib-devel
+RUN yum --disableplugin=subscription-manager -y install wget make xz gcc libyaml-devel zlib zlib-devel openssl openssl-devel glibc-headers glibc-devel
 RUN yum --disableplugin=subscription-manager clean all
 
 FROM dependencies AS builder
@@ -21,7 +21,7 @@ WORKDIR /
 
 FROM builder AS final
 
-ARG RUBY_BERSION=3.2
+ARG RUBY_BERSION=3.2.2
 
 # Install Ruby
 RUN ruby-install --no-install-deps --system ruby ${RUBY_BERSION}
