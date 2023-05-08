@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build:
+  build_and_publish:
     docker:
       - image: circleci/buildpack-deps:stretch
     parameters:
@@ -15,34 +15,18 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Build docker image
-          command: docker build --build-arg IMAGE=<< parameters.container_base >> --build-arg RUBY_BERSION=<< parameters.ruby_version >> -t ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >> .
-  publish:
-    docker:
-      - image: circleci/buildpack-deps:stretch
-    parameters:
-      ruby_version:
-        type: string
-      container_base:
-        type: string
-    steps:
-      - setup_remote_docker
+          command: |
+            docker build --build-arg IMAGE=<< parameters.container_base >> --build-arg RUBY_BERSION=<< parameters.ruby_version >> -t ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >> .
       - run:
-          name: Publisher Docker Image to Github Packages
+          name: Publish to Github Container Registry
           command: |
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
-            docker push ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >>
+            docker push ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >>       
+
 workflows:
   build_and_publish:
     jobs:
-      - build:
-          name: build-<< matrix.container_base >>-<< matrix.ruby_version >>
-          matrix:
-            parameters:
-              ruby_version: ['3.2.2', '3.1.4', '3.0.6']
-              container_base: ['ubi9', 'ubi8']
-      - publish:
-          requires:
-            - build-<< matrix.container_base >>-<< matrix.ruby_version >>
+      - build_and_publish:
           matrix:
             parameters:
               ruby_version: ['3.2.2', '3.1.4', '3.0.6']
