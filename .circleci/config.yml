@@ -14,8 +14,14 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
+          name: Prepare Docker
+          command: |
+            docker context create buildx-build
+            docker buildx create --use buildx-build
+      - run:
           name: Build docker image
           command: |
+            export DOCKER_CLI_EXPERIMENTAL=enabled
             docker buildx build \
               --platform linux/amd64,linux/arm64 \
               --build-arg IMAGE=<< parameters.container_base >> \
