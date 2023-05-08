@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build_and_publish:
     docker:
-      - image: circleci/buildpack-deps:stretch
+      - image: cimg/base:stable
     parameters:
       ruby_version:
         type: string
@@ -12,6 +12,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
+          version: 20.10.18
           docker_layer_caching: true
       - run:
           name: Build docker image
