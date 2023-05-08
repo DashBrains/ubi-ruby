@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    parameters:
+      ruby_version:
+        type: string
+      container_base:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build docker image
+          command: docker build --build-arg IMAGE=<< parameters.container_base >> --build-arg RUBY_BERSION=<< parameters.ruby_version >> -t ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >> .
+  publish:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    parameters:
+      ruby_version:
+        type: string
+      container_base:
+        type: string
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Publisher Docker Image to Github Packages
+          command: |
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+            docker push ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >>
+workflows:
+  publish:
+    jobs:
+      - build:
+          matrix:
+            parameters:
+              ruby_version: ['3.2.2', '3.1.4', '3.0.6']
+              container_base: ['ubi9', 'ubi8']
+      - publish:
+          matrix:
+            parameters:
+              ruby_version: ['3.2.2', '3.1.4', '3.0.6']
+              container_base: ['ubi9', 'ubi8']
