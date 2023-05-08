@@ -35,13 +35,14 @@ workflows:
   build_and_publish:
     jobs:
       - build:
+          name: build-<< matrix.container_base >>-<< matrix.ruby_version >>
           matrix:
             parameters:
               ruby_version: ['3.2.2', '3.1.4', '3.0.6']
               container_base: ['ubi9', 'ubi8']
       - publish:
           requires:
-            - build
+            - build-<< matrix.container_base >>-<< matrix.ruby_version >>
           matrix:
             parameters:
               ruby_version: ['3.2.2', '3.1.4', '3.0.6']
