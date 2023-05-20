@@ -23,7 +23,7 @@ jobs:
           command: |
             export DOCKER_CLI_EXPERIMENTAL=enabled
             docker buildx build \
-              --platform linux/amd64,linux/arm64 \
+              --platform linux/amd64 \
               --build-arg IMAGE=<< parameters.container_base >> \
               --build-arg RUBY_BERSION=<< parameters.ruby_version >> \
               -t ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >> .
