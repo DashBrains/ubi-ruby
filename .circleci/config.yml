@@ -18,21 +18,25 @@ jobs:
           command: |
             docker context create buildx-build
             docker buildx create --use buildx-build
+
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
       - run:
           name: Build docker image
           command: |
             export DOCKER_CLI_EXPERIMENTAL=enabled
+            
             docker buildx build \
               --platform linux/amd64 \
               --build-arg IMAGE=<< parameters.container_base >> \
               --build-arg RUBY_BERSION=<< parameters.ruby_version >> \
-              --tag app .
-      - run:
-          name: Publish to Github Container Registry
-          command: |
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
-            docker tag app ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >>  
-            docker push ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >>       
+              --push \
+              --tag ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >>  .
+#      - run:
+#          name: Publish to Github Container Registry
+#          command: |
+#            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+#            docker tag app ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >>  
+#            docker push ghcr.io/dashbrains/<< parameters.container_base >>/ruby:<< parameters.ruby_version >>       
 
 workflows:
   build_and_publish:
