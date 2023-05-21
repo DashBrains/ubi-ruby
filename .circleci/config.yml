@@ -40,3 +40,7 @@ workflows:
             parameters:
               ruby_version: ['3.2.2', '3.1.4', '3.0.6']
               container_base: ['ubi9', 'ubi8']
+          filters:
+            branches:
+              only: main
+

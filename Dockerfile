@@ -14,6 +14,7 @@ ARG RUBY_INSTALL_VERSION=0.9.0
 # Install ruby-install
 RUN wget https://github.com/postmodern/ruby-install/releases/download/v${RUBY_INSTALL_VERSION}/ruby-install-${RUBY_INSTALL_VERSION}.tar.gz
 RUN tar -xzvf ruby-install-${RUBY_INSTALL_VERSION}.tar.gz
+RUN rm -rf ruby-install-${RUBY_INSTALL_VERSION}.tar.gz
 WORKDIR /ruby-install-${RUBY_INSTALL_VERSION}/
 RUN make install
 
@@ -24,6 +25,14 @@ FROM builder AS final
 ARG RUBY_BERSION=3.2.2
 
 # Install Ruby
-RUN ruby-install --no-install-deps --system ruby ${RUBY_BERSION}
+RUN ruby-install --no-install-deps --system --cleanup ruby ${RUBY_BERSION}
 
+# Cleaanup
+WORKDIR /ruby-install-${RUBY_INSTALL_VERSION}/
+RUN make uninstall
+
+WORKDIR /
+RUN rm -rf /ruby-install-${RUBY_INSTALL_VERSION}
+
+# Labels
 LABEL org.opencontainers.image.source https://github.com/dashbrains/ubi-ruby
