@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  build_and_publish:
+    docker:
+      - image: cimg/base:stable
+    parameters:
+      ruby_version:
+        type: string
+      container_base:
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Prepare Docker
+          command: |
+            docker context create buildx-build
+            docker buildx create --use buildx-build
+
+            echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - run:
+          name: Build docker image
+          command: |
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+
+            docker buildx build \
+              --platform linux/amd64 \
+              --build-arg IMAGE=<< parameters.container_base >> \
+              --build-arg RUBY_BERSION=<< parameters.ruby_version >> \
+              --push \
+              --tag dashbrains/ubi-ruby:<< parameters.ruby_version >>-<< parameters.container_base >>  .
+
+workflows:
+  build_and_publish:
+    jobs:
+      - build_and_publish:
+          matrix:
+            parameters:
+              ruby_version: ['3.2.2', '3.1.4', '3.0.6']
+              container_base: ['ubi9', 'ubi8']
+          filters:
+            branches:
+              only: main
+
