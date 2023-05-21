@@ -4,7 +4,7 @@ FROM redhat/${IMAGE} AS dependencies
 
 # Install dependencies
 RUN yum --disableplugin=subscription-manager -y update
-RUN yum --disableplugin=subscription-manager -y install wget make xz gcc libyaml-devel zlib zlib-devel openssl openssl-devel glibc-headers glibc-devel gcc gcc-c++
+RUN yum --disableplugin=subscription-manager -y install wget make xz gcc libyaml-devel zlib zlib-devel openssl openssl-devel glibc-headers glibc-devel gcc gcc-c++ procps
 RUN yum --disableplugin=subscription-manager clean all
 
 FROM dependencies AS builder
