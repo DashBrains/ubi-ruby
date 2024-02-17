@@ -9,7 +9,7 @@ RUN yum --disableplugin=subscription-manager clean all
 
 FROM dependencies AS builder
 
-ARG RUBY_INSTALL_VERSION=0.9.0
+ARG RUBY_INSTALL_VERSION=0.9.3
 
 # Install ruby-install
 RUN wget https://github.com/postmodern/ruby-install/releases/download/v${RUBY_INSTALL_VERSION}/ruby-install-${RUBY_INSTALL_VERSION}.tar.gz
@@ -22,7 +22,7 @@ WORKDIR /
 
 FROM builder AS final
 
-ARG RUBY_BERSION=3.2.2
+ARG RUBY_BERSION=3.3.0
 
 # Install Ruby
 RUN ruby-install --no-install-deps --system --cleanup ruby ${RUBY_BERSION}
